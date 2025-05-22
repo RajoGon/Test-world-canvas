@@ -1,9 +1,40 @@
-
 import { Link } from "react-router-dom";
 import { products } from "../data/products";
 
 const Index = () => {
   const featuredProducts = products.slice(0, 3);
+  
+  // Define product categories with images and colors
+  const categories = [
+    { 
+      id: "yoga", 
+      name: "Yoga Products", 
+      image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9",
+      color: "bg-soft-green",
+      description: "Sustainable yoga mats and accessories"
+    },
+    { 
+      id: "decor", 
+      name: "Home Decor", 
+      image: "https://images.unsplash.com/photo-1518495973542-4542c06a5843",
+      color: "bg-soft-yellow",
+      description: "Eco-friendly decorative items"
+    },
+    { 
+      id: "furniture", 
+      name: "Furniture", 
+      image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+      color: "bg-soft-blue",
+      description: "Sustainable furniture solutions"
+    },
+    { 
+      id: "accessories", 
+      name: "Accessories", 
+      image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb",
+      color: "bg-soft-peach",
+      description: "Eco-conscious personal accessories"
+    }
+  ];
 
   return (
     <div>
@@ -128,6 +159,52 @@ const Index = () => {
                 traditional crafts while creating economic opportunities.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Categories Section - NEW */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">Browse by Category</h2>
+            <p className="text-gray-600">
+              Explore our sustainable product range by category
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category) => (
+              <Link 
+                to={`/products?category=${category.id}`} 
+                key={category.id}
+                className="group overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <div className={`${category.color} p-6 h-full flex flex-col hover:scale-[1.02] transition-transform duration-300`}>
+                  <div className="h-48 rounded-lg overflow-hidden mb-4">
+                    <img 
+                      src={category.image} 
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-medium text-gray-900 mb-2">{category.name}</h3>
+                  <p className="text-sm text-gray-600 mb-4">{category.description}</p>
+                  <div className="mt-auto flex items-center text-sage-600 font-medium">
+                    <span>View Products</span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-5 w-5 ml-1 transition-transform group-hover:translate-x-1" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

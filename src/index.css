@@ -64,4 +64,37 @@
   .btn-outline {
     @apply border border-sage-400 text-sage-600 hover:bg-sage-50 px-6 py-3 rounded-md font-medium transition-colors duration-300;
   }
+
+  /* Category card background colors */
+  .bg-soft-green {
+    @apply bg-[#F2FCE2];
+  }
+  
+  .bg-soft-yellow {
+    @apply bg-[#FEF7CD];
+  }
+  
+  .bg-soft-orange {
+    @apply bg-[#FEC6A1];
+  }
+  
+  .bg-soft-purple {
+    @apply bg-[#E5DEFF];
+  }
+  
+  .bg-soft-pink {
+    @apply bg-[#FFDEE2];
+  }
+  
+  .bg-soft-peach {
+    @apply bg-[#FDE1D3];
+  }
+  
+  .bg-soft-blue {
+    @apply bg-[#D3E4FD];
+  }
+  
+  .bg-soft-gray {
+    @apply bg-[#F1F0FB];
+  }
 }
