@@ -1,15 +1,19 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Search, Filter, Tag } from "lucide-react";
 import ProductCard from "../components/ProductCard";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { products } from "../data/products";
 
 const Products = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get("category");
 
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [activeCategory, setActiveCategory] = useState<string | null>(categoryFilter);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [
     { id: "all", name: "All Products" },
@@ -19,13 +23,37 @@ const Products = () => {
     { id: "accessories", name: "Accessories" },
   ];
 
+  const allTags = Array.from(
+    new Set(products.flatMap((product) => product.materials))
+  ).sort();
+
+  useEffect(() => {
+    let filtered = products;
+
+    // Apply category filter
+    if (categoryFilter && categoryFilter !== "all") {
+      filtered = filtered.filter(product => product.category === categoryFilter);
+    }
+
+    // Apply search query filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        product =>
+          product.name.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query) ||
+          product.materials.some(material => material.toLowerCase().includes(query))
+      );
+    }
+
+    setFilteredProducts(filtered);
+  }, [categoryFilter, searchQuery]);
+
   useEffect(() => {
     if (categoryFilter && categoryFilter !== "all") {
       setActiveCategory(categoryFilter);
-      setFilteredProducts(products.filter(product => product.category === categoryFilter));
     } else {
       setActiveCategory("all");
-      setFilteredProducts(products);
     }
   }, [categoryFilter]);
 
@@ -33,10 +61,18 @@ const Products = () => {
     setActiveCategory(category);
     
     if (category === "all") {
-      setFilteredProducts(products);
+      setSearchParams({});
     } else {
-      setFilteredProducts(products.filter(product => product.category === category));
+      setSearchParams({ category });
     }
+  };
+
+  const handleTagClick = (tag: string) => {
+    setSearchQuery(tag);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -47,6 +83,54 @@ const Products = () => {
           <p className="text-lg text-gray-600">
             Discover our range of sustainable products, crafted with care for your business and the planet.
           </p>
+        </div>
+
+        {/* Search and Tags Section */}
+        <div className="mb-8">
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Search products by name, description, or material..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          
+          <div className="mb-4">
+            <div className="flex items-center mb-2">
+              <Tag className="h-4 w-4 mr-2 text-sage-600" />
+              <h3 className="text-sm font-medium text-gray-700">Product Materials:</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {allTags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="outline"
+                  className={`cursor-pointer transition-colors hover:bg-sage-100 ${
+                    searchQuery.toLowerCase() === tag.toLowerCase() ? 'bg-sage-100 border-sage-500' : ''
+                  }`}
+                  onClick={() => handleTagClick(tag)}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          {searchQuery && (
+            <div className="flex items-center mb-6">
+              <span className="text-sm text-gray-600 mr-2">Filtering by:</span>
+              <Badge className="bg-sage-400">
+                {searchQuery}
+                <button 
+                  className="ml-2 hover:text-sage-100" 
+                  onClick={() => setSearchQuery("")}
+                >
+                  ×
+                </button>
+              </Badge>
+            </div>
+          )}
         </div>
 
         {/* Category Filters */}
@@ -75,8 +159,8 @@ const Products = () => {
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-16">
-            <h3 className="text-xl text-gray-700">No products found in this category.</h3>
-            <p className="text-gray-500 mt-2">Please try a different category.</p>
+            <h3 className="text-xl text-gray-700">No products found.</h3>
+            <p className="text-gray-500 mt-2">Try a different search or category.</p>
           </div>
         )}
       </div>
